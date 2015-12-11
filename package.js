@@ -1,8 +1,8 @@
 Package.describe({
-  name: 'typ:accounts-ldap',
+  name: 'rmbrich:meteor-activedirectory',
   version: '1.0.0',
-  summary: 'Accounts login for LDAP using ldapjs. Supports anonymous DN search & LDAPS.',
-  git: 'https://github.com/typ90/meteor-accounts-ldap',
+  summary: 'Meteor wrapper for logging into Active Directory NOT using Accounts',
+  git: '',
   documentation: 'README.md'
 });
 
@@ -12,16 +12,10 @@ Package.onUse(function(api) {
 
   api.use(['templating'], 'client');
   api.use(['typ:ldapjs@0.7.3'], 'server');
-
-
-  api.use('accounts-base', 'server');
-  api.imply('accounts-base', ['client', 'server']);
-
   api.use('check');
 
-  api.addFiles(['ldap_client.js'], 'client');
   api.addFiles(['ldap_server.js'], 'server');
 
-  api.export('LDAP', 'server');
   api.export('LDAP_DEFAULTS', 'server');
+  api.export('ActiveDirectory', 'server');
 });

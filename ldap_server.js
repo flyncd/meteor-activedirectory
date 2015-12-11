@@ -110,8 +110,6 @@ LDAP.prototype.ldapCheck = function(options) {
 							username: username,
 							searchResults: null
 						};
-						// Set email on return object
-						retObject.email = domain ? username + '@' + domain : false;
 
 						// Return search results if specified
 						if (self.options.searchResultsProfileMap) {
@@ -231,106 +229,38 @@ LDAP.prototype.ldapCheck = function(options) {
 
 };
 
-
-// Register login handler with Meteor
-// Here we create a new LDAP instance with options passed from
-// Meteor.loginWithLDAP on client side
-// @param {Object} loginRequest will consist of username, ldapPass, ldap, and ldapOptions
-Accounts.registerLoginHandler('ldap', function(loginRequest) {
-	// If 'ldap' isn't set in loginRequest object,
-	// then this isn't the proper handler (return undefined)
-	if (!loginRequest.ldap) {
-		return undefined;
-	}
-
-	// Instantiate LDAP with options
-	var userOptions = loginRequest.ldapOptions || {};
-	var ldapObj = new LDAP(userOptions);
-
-	// Call ldapCheck and get response
-	var ldapResponse = ldapObj.ldapCheck(loginRequest);
-
-	if (ldapResponse.error) {
-		return {
-			userId: null,
-			error: ldapResponse.error
-		};
-	}
-	else if (ldapResponse.emptySearch) {
-		return {
-			userId: null,
-			error: 'User not found'
-		};
-	}
-	else {
-		// Set initial userId and token vals
-		var userId = null;
-		var stampedToken = {
-			token: null
-		};
-
-		// Look to see if user already exists
-		var user = Meteor.users.findOne({
-			username: ldapResponse.username
-		});
-
-		// Login user if they exist
-		if (user) {
-			userId = user._id;
-
-			// Create hashed token so user stays logged in
-			stampedToken = Accounts._generateStampedLoginToken();
-			var hashStampedToken = Accounts._hashStampedToken(stampedToken);
-			// Update the user's token in mongo
-			Meteor.users.update(userId, {
-				$push: {
-					'services.resume.loginTokens': hashStampedToken
-				}
-			});
-		}
-		// Otherwise create user if option is set
-		else if (ldapObj.options.createNewUser) {
-			var userObject = {
-				username: ldapResponse.username
-			};
-			// Set email
-			if (ldapResponse.email) userObject.email = ldapResponse.email;
-
-			// Set profile values if specified in searchResultsProfileMap
-			if (ldapResponse.searchResults && ldapObj.options.searchResultsProfileMap.length > 0) {
-
-				var profileMap = ldapObj.options.searchResultsProfileMap;
-				var profileObject = {};
-
-				// Loop through profileMap and set values on profile object
-				for (var i = 0; i < profileMap.length; i++) {
-					var resultKey = profileMap[i].resultKey;
-
-					// If our search results have the specified property, set the profile property to its value
-					if (ldapResponse.searchResults.hasOwnProperty(resultKey)) {
-						profileObject[profileMap[i].profileProperty] = ldapResponse.searchResults[resultKey];
-					}
-
-				}
-				// Set userObject profile
-				userObject.profile = profileObject;
+/**
+ * This package exports the ActiveDirectory object for use on the server.
+ * Right now, "login" is the only function available.
+ * "login" constructs an LDAP query using the provided username and password,
+ * and the value specifid by LDAP_DEFAULTS.domain.
+ * Active Directory can authenticate using username@domain, as opposed to
+ * needing a full Distinguished Name (dn) like some LDAP systems.
+ * This function also sets the LDAP "search" value to look for a sAMAccountName
+ * matching the passed username. This effectively returns all information about
+ * whichever username was authenticated.
+ *
+ * Example use:
+ * LDAP_DEFAULTS.domain = "mycompany.com";
+ * ActiveDirectory.login('myusername', 'mypass');
+*/
+ActiveDirectory = {
+	login : function(username, password) {
+		var loginRequest = {
+	    username: username,
+	    ldapPass: password,
+	    ldap: true,
+	    ldapOptions: {
+	      dn: username + '@' + LDAP_DEFAULTS.domain,
+	      search: '(sAMAccountName=' + username + ')'
 			}
+	  };
 
+		// Instantiate LDAP with options
+	  var userOptions = loginRequest.ldapOptions || {};
+	  var ldapObj = new LDAP(userOptions);
 
-			userId = Accounts.createUser(userObject);
-		} else {
-			// Ldap success, but no user created
-			return {
-				userId: null,
-				error: 'LDAP Authentication succeded, but no user exists in Mongo. Either create a user for this email or set LDAP_DEFAULTS.createNewUser to true'
-			};
-		}
-
-		return {
-			userId: userId,
-			token: stampedToken.token
-		};
+	  // Call ldapCheck and get response
+	  return ldapObj.ldapCheck(loginRequest);
 	}
-
-	return undefined;
-});
+};

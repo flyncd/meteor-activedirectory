@@ -1,7 +1,9 @@
-Meteor Package accounts-ldap
+Meteor Package meteor-activedirectory
 ============================
 
-This is inspired by [emgee3's Accounts Ldap for meteor package](https://github.com/emgee3/meteor-accounts-ldap). emgee3's package is a proof of concept - this package is an attempt to move past proof of concept and create something production ready and tested.
+This package borrows heavily from [typ's meteor-accounts-ldap](https://github.com/typ90/meteor-accounts-ldap), including this Readme. The package provides a function for authenticating a user against Active Directory, but purposely does NOT rely on Meteor's Accounts system. It simply returns authentication success, errors, and search results (if applicable).
+
+This package was created for a use case in which Mongo - and therefore Meteor Accounts - is not available.
 
 
 Installation
