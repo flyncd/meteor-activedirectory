@@ -2,7 +2,7 @@ Package.describe({
   name: 'rmbrich:meteor-activedirectory',
   version: '1.0.0',
   summary: 'Meteor wrapper for logging into Active Directory NOT using Accounts',
-  git: '',
+  git: 'https://github.com/rmbrich/meteor-activedirectory.git',
   documentation: 'README.md'
 });
 
