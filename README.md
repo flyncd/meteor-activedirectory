@@ -86,7 +86,7 @@ LDAP_DEFAULTS.searchResultsProfileMap = [{
 }];
 
 Meteor.methods({
-  loginWithLDAP: function(username, password) {
+  loginWithAD: function(username, password) {
 
     var ldapResponse = ActiveDirectory.login(username, password);
     console.log(ldapResponse);
