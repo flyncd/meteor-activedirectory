@@ -33,7 +33,7 @@ E.g. `ldap://IMADC.your.company.com`
 E.g.: if your domain controller is `IMADC.your.company.com`, set this to `DC=your,DC=company,DC=com`.
 
 `LDAP_DEFAULTS.domain`: Active Directory can authenticate using **username@domain**, as opposed to needing a full Distinguished Name (dn) like some LDAP systems. Set the **domain** portion here.
-E.g.: if your domain is `mycompany.com`, set this to `mycompany.com`.
+E.g.: if your domain is `your.company.com`, set this to `your.company.com`.
 
 `LDAP_DEFAULTS.searchResultsProfileMap`: This can be used if there are attributes of the user you'd like to return in the results object.
 
