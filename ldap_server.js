@@ -8,7 +8,7 @@ LDAP_DEFAULTS = {
 	url: false,
 	port: '389',
 	dn: false,
-	createNewUser: true,
+	createNewUser: false,
 	defaultDomain: false,
 	searchResultsProfileMap: false,
 	base: null,
@@ -55,7 +55,8 @@ LDAP.prototype.ldapCheck = function(options) {
 
 	options = options || {};
 
-	if (options.hasOwnProperty('username') && options.hasOwnProperty('ldapPass')) {
+	if (options.hasOwnProperty('username') && options.hasOwnProperty('ldapPass')
+		&& options.username != '' && options.ldapPass != '') {
 
 		var ldapAsyncFut = new Future();
 
@@ -99,6 +100,7 @@ LDAP.prototype.ldapCheck = function(options) {
 		if (self.options.dn) {
 			// Attempt to bind to ldap server with provided info
 			client.bind(self.options.dn, options.ldapPass, function(err) {
+
 				try {
 					if (err) {
 						// Bind failure, return error
@@ -145,9 +147,11 @@ LDAP.prototype.ldapCheck = function(options) {
 						}
 					}
 				} catch (e) {
-					ldapAsyncFut.return({
-						error: e
-					});
+					//ldapAsyncFut.return({
+					//	error: e
+					//});
+					console.log(e);
+					//throw new Meteor.Error(e);
 				}
 			});
 		}
