@@ -147,11 +147,9 @@ LDAP.prototype.ldapCheck = function(options) {
 						}
 					}
 				} catch (e) {
-					//ldapAsyncFut.return({
-					//	error: e
-					//});
-					console.log(e);
-					//throw new Meteor.Error(e);
+					ldapAsyncFut.return({
+						error: e
+					});
 				}
 			});
 		}
