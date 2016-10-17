@@ -88,12 +88,12 @@ LDAP.prototype.ldapCheck = function(options) {
 
 		// If user appended email domain, strip it out
 		// And use the defaults.defaultDomain if set
-		if (emailSliceIndex !== -1) {
-			username = options.username.substring(0, emailSliceIndex);
-			domain = domain || options.username.substring((emailSliceIndex + 1), options.username.length);
-		} else {
+		//if (emailSliceIndex !== -1) {
+		//	username = options.username.substring(0, emailSliceIndex);
+		//	domain = domain || options.username.substring((emailSliceIndex + 1), options.username.length);
+		//} else {
 			username = options.username;
-		}
+		//}
 
 
 		// If DN is provided, use it to bind
